@@ -26,6 +26,8 @@
       <TodoList
         v-bind:propsdata="todoItems"
         @removeTodo="removeTodo"
+        @completeTodo="completeTodo"
+        @updateTodo="updateTodo"
       ></TodoList>
     </v-main>
     <v-footer color="primary">
@@ -60,12 +62,12 @@ export default {
       localStorage.clear();
       this.todoItems = [];
     },
-    addTodo(todoItem) {
-      localStorage.setItem(todoItem, todoItem);
-      this.todoItems.push(todoItem);
+    addTodo(todoObj) {
+      localStorage.setItem(todoObj.sn, JSON.stringify(todoObj));
+      this.todoItems.push(todoObj);
     },
     removeTodo(todoItem, index) {
-      localStorage.removeItem(todoItem);
+      localStorage.removeItem(todoItem.sn);
       this.todoItems.splice(index, 1);
     },
     completeTodo(todoObj) {
@@ -99,10 +101,6 @@ export default {
 body {
   text-align: center;
   background-color: #f6f6f8;
-}
-input {
-  border-style: groove;
-  width: 200px;
 }
 .shadow {
   box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.03);

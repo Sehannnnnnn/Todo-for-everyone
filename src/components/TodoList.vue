@@ -7,11 +7,10 @@
             <v-list-item-avatar @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
               <v-icon> mdi-check </v-icon>
             </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title v-text="todoItem"></v-list-item-title>
+            <v-list-item-content @click="showDetailModal(todoItem)">
+              <v-list-item-title v-text="todoItem.title" v-bind:class="{todoTitle: true}"></v-list-item-title>
+              <v-list-item-content v-text="todoItem.detail" v-bind:class="{todoDetail: true}"></v-list-item-content>
             </v-list-item-content>
-
             <v-list-item-action @click="removeTodo(todoItem, index)">
               <v-btn icon>
                 <v-icon>mdi-close</v-icon>
@@ -21,12 +20,53 @@
         </v-card-actions>
       </v-card>
     </transition-group>
+
+  <TodoDetailModal v-if="showModal" @close="showModal=false">
+    <h2 slot="header">TODO</h2>
+        <v-form slot="bodyform">
+          <v-container>
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+            >
+            <v-text-field v-model="Todo.title" placeholder="Type what you have to do" :rules="rules" coutner="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            </v-col>
+            <v-col
+              cols="12"
+              md="12"
+            >
+              <v-textarea
+                v-model="Todo.detail"
+                label="Todo details"
+                hint="Write about details"
+              ></v-textarea>
+            </v-col>
+          </v-row>
+        </v-container>
+        </v-form>
+      <v-btn elevation="2" slot="footer" @click="showModal = false">Back
+        <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
+      </v-btn>
+      <v-btn elevation="2" slot="footer" @click="[showModal = false, updateTodo()]">Save Changes
+        <span class="addContainer">
+        <i class="addBtn fas fa-plus" aria-hidden="true"></i>
+    </span>
+      </v-btn>
+  </TodoDetailModal>
   </v-container>
 </template>
-
 <script>
+import TodoDetailModal from './Modal/TodoDetailModal.vue';
+
 export default {
   props: ["propsdata"],
+  data() {
+    return {
+      showModal : false,
+      Todo : {}
+    }
+  },
   methods: {
     removeTodo(todoItem, index) {
       this.$emit("removeTodo", todoItem, index);
@@ -37,12 +77,11 @@ export default {
     completeTodo(todoItem) {
       this.$emit("completeTodo", todoItem);
     },
-    
   },
 };
 </script>
-
 <style scoped>
+
 ul {
   list-style-type: none;
   padding-left: 0px;
@@ -69,6 +108,16 @@ li {
   color: #de4343;
 }
 
+.todoTitle {
+  font-size: 18px;
+  font-weight: bolder;
+}
+
+.todoDetail {
+  font-size: 15px;
+  padding: 8px;
+}
+
 .list-enter-active,
 .list-leave-active {
   transition: all 1s;
@@ -77,5 +126,8 @@ li {
 .list-leave-to {
   opacity: 0;
   transform: translateY(30px);
+}
+.hover {
+  font-size: 10;
 }
 </style>

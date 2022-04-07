@@ -1,29 +1,62 @@
 <template>
   <div class="inputBox shadow">
-    <input type="text" v-model="newTodoItem" placeholder="Type what you have to do" v-on:keyup.enter="addTodo">
-    <span class="addContainer" v-on:click="addTodo">
-      <i class="addBtn fas fa-plus" aria-hidden="true"></i>
-    </span>
-
-    <modal v-if="showModal" @close="showModal = false">
+    <v-btn elevation="3" @click="showInputModal = true">Write Todo</v-btn>
+    <v-divider></v-divider>
+    <AlertModal v-if="showModal" @close="showModal = false">
       <h3 slot="header">경고</h3>
       <span slot="footer" @click="showModal = false">할 일을 입력하세요.
         <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
       </span>
-    </modal>
+    </AlertModal>
+
+    <TodoInputModal v-if="showInputModal" @close="showInuputModal=false">
+    <h2 slot="header">TODO</h2>
+        <v-form slot="bodyform">
+          <v-container>
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+            >
+            <v-text-field v-model="todoTitle" label="Todo title"
+            :rules="rules" coutner="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            </v-col>
+            <v-col
+              cols="12"
+              md="12"
+            >
+              <v-textarea
+                v-model="todoDetail"
+                label="Todo details"
+                hint="Write about details"
+              ></v-textarea>
+            </v-col>
+          </v-row>
+        </v-container>
+        </v-form>
+      <v-btn elevation="2" slot="footer" @click="showInputModal = false">Back
+        <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
+      </v-btn>
+      <v-btn elevation="2" slot="footer" @click="[showInputModal = false, addTodo()]">Save TODO
+        <span class="addContainer">
+        <i class="addBtn fas fa-plus" aria-hidden="true"></i>
+    </span>
+      </v-btn>
+    </TodoInputModal>
   </div>
 </template>
 
 <script>
-import Modal from './common/AlertModal.vue'
+import AlertModal from './common/AlertModal.vue'
+import TodoInputModal from './Modal/TodoInputModal.vue'
 
 export default {
   data() {
     return {
       todoTitle: "",
       todoDetail: "",
-      
       showModal: false
+
     }
   },
   methods: {
@@ -46,9 +79,11 @@ export default {
        this.todoTitle = '';
       this.todoDetail = '';
     }
+
   },
   components: {
-    Modal: Modal
+    AlertModal,
+    TodoInputModal,
   }
 }
 </script>
@@ -69,7 +104,7 @@ input:focus {
   font-size: 0.9rem;
 }
 .addContainer {
-  float: right;
+  float: none;
   background: linear-gradient(to right, #6478FB, #8763FB);
   display: inline-block;
   width: 3rem;
@@ -78,5 +113,9 @@ input:focus {
 .addBtn {
   color: white;
   vertical-align: middle;
+}
+
+.inputBtn {
+  margin: 3px;
 }
 </style>
