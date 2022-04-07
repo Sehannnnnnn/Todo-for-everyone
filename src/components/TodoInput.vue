@@ -20,22 +20,31 @@ import Modal from './common/AlertModal.vue'
 export default {
   data() {
     return {
-      newTodoItem: '',
+      todoTitle: "",
+      todoDetail: "",
+      
       showModal: false
     }
   },
   methods: {
     addTodo() {
-      if (this.newTodoItem !== "") {
-        var value = this.newTodoItem && this.newTodoItem.trim();
-				this.$emit('addTodo', value)
+       if (this.todoTitle !== "") {
+        let todoObj = {
+          sn : + new Date(),
+          title : this.todoTitle && this.todoTitle.trim(),
+          detail : this.todoDetail && this.todoDetail.trim(),
+          isCompleted : false,
+          isDeleted : false,
+        };
+				this.$emit('addTodo', todoObj)
         this.clearInput();
       } else {
         this.showModal = !this.showModal;
       }
     },
     clearInput() {
-      this.newTodoItem = '';
+       this.todoTitle = '';
+      this.todoDetail = '';
     }
   },
   components: {
