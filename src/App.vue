@@ -68,11 +68,27 @@ export default {
       localStorage.removeItem(todoItem);
       this.todoItems.splice(index, 1);
     },
+    completeTodo(todoObj) {
+      const item = JSON.parse(localStorage.getItem(todoObj.sn));
+      todoObj.isCompleted = !todoObj.isCompleted;
+      if (todoObj.isCompleted) {
+        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: true}))
+      } else {
+        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: false}))
+      }
+    },
+    updateTodo(todoObj) {
+      const input = JSON.stringify(todoObj);
+      localStorage.setItem(todoObj.sn, input);
+    }
   },
   created() {
     if (localStorage.length > 0) {
       for (var i = 0; i < localStorage.length; i++) {
-        this.todoItems.push(localStorage.key(i));
+        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+      } if (this.todoItems.length > 1) {
+          const key = "sn";
+          this.todoItems.sort(function (a,b) {return a[key] - b[key]})
       }
     }
   },
