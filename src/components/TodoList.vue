@@ -4,7 +4,7 @@
       <v-card class="mb-2 " v-for="(todoItem, index) in propsdata" :key="todoItem">
         <v-card-actions>
           <v-list-item>
-            <v-list-item-avatar>
+            <v-list-item-avatar @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
               <v-icon> mdi-check </v-icon>
             </v-list-item-avatar>
             <v-list-item-content @click="showDetailModal(todoItem)">
@@ -71,18 +71,12 @@ export default {
     removeTodo(todoItem, index) {
       this.$emit("removeTodo", todoItem, index);
     },
-    showDetailModal(todoItem){
-      this.showModal = true;
-      this.Todo = todoItem
+    updateTodo() {
+      this.$emit("updateTodo", this.Todo);
     },
-    closeModal() {
-      this.showModal = false;
-      this.title = "";
-      this.detail = "";
+    completeTodo(todoItem) {
+      this.$emit("completeTodo", todoItem);
     },
-  },
-  components: {
-    TodoDetailModal
   },
 };
 </script>

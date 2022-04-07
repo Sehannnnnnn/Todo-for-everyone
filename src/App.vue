@@ -70,6 +70,19 @@ export default {
       localStorage.removeItem(todoItem.sn);
       this.todoItems.splice(index, 1);
     },
+    completeTodo(todoObj) {
+      const item = JSON.parse(localStorage.getItem(todoObj.sn));
+      todoObj.isCompleted = !todoObj.isCompleted;
+      if (todoObj.isCompleted) {
+        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: true}))
+      } else {
+        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: false}))
+      }
+    },
+    updateTodo(todoObj) {
+      const input = JSON.stringify(todoObj);
+      localStorage.setItem(todoObj.sn, input);
+    }
   },
   created() {
     if (localStorage.length > 0) {

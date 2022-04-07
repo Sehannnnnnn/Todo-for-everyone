@@ -55,17 +55,18 @@ export default {
     return {
       todoTitle: "",
       todoDetail: "",
-      showModal: false,
-      showInputModal : false,
+      showModal: false
+
     }
   },
   methods: {
     addTodo() {
-      if (this.todoTitle !== "") {
+       if (this.todoTitle !== "") {
         let todoObj = {
           sn : + new Date(),
           title : this.todoTitle && this.todoTitle.trim(),
           detail : this.todoDetail && this.todoDetail.trim(),
+          isCompleted : false,
           isDeleted : false,
         };
 				this.$emit('addTodo', todoObj)
@@ -75,9 +76,10 @@ export default {
       }
     },
     clearInput() {
-      this.todoTitle = '';
+       this.todoTitle = '';
       this.todoDetail = '';
-    },
+    }
+
   },
   components: {
     AlertModal,
