@@ -7,7 +7,6 @@
             <v-list-item-avatar @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
               <v-icon> mdi-check </v-icon>
             </v-list-item-avatar>
-            <v-list-item-content @click="showDetailModal(todoItem)">
               <v-list-item-title v-text="todoItem.title" @click="updateTodo(todoItem, index)" v-bind:class="{todoTitle: true}"></v-list-item-title>
               <v-list-item-content v-text="todoItem.detail" v-bind:class="{todoDetail: true}"></v-list-item-content>
             </v-list-item-content>
@@ -74,6 +73,7 @@ export default {
     updateTodo() {
       this.$emit("updateTodo", this.Todo);
     },
+
     doMouseOver(event) {
       console.log('mouseover!');
       event.target.style.fontWeight = "bold";
@@ -97,6 +97,7 @@ export default {
   },
   components: {
     TodoDetailModal
+
   },
 };
 </script>

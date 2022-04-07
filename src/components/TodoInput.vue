@@ -2,7 +2,6 @@
   <div class="inputBox shadow">
     <v-btn elevation="3" @click="showInputModal = true">Write Todo</v-btn>
     <v-divider></v-divider>
-
     <AlertModal v-if="showModal" @close="showModal = false">
       <h3 slot="header">경고</h3>
       <span slot="footer" @click="showModal = false">할 일을 입력하세요.
@@ -56,12 +55,14 @@ export default {
     return {
       todoTitle: "",
       todoDetail: "",
+
       showModal: false,
       showInputModal : false,
     }
   },
   methods: {
     addTodo() {
+
       if (this.todoTitle !== "") {
         let todoObj = {
           sn : + new Date(),
@@ -77,6 +78,7 @@ export default {
       }
     },
     clearInput() {
+
       this.todoTitle = '';
       this.todoDetail = '';
     },
