@@ -1,6 +1,7 @@
 <template>
   <div class="inputBox shadow">
     <v-btn elevation="3" @click="showInputModal = true">Write Todo</v-btn>
+    <v-btn elevation="3" @click="clearTodo">Clear All</v-btn>
     <v-divider></v-divider>
     <AlertModal v-if="showModal" @close="showModal = false">
       <h3 slot="header">경고</h3>
@@ -19,7 +20,16 @@
               md="12"
             >
             <v-text-field v-model="todoTitle" label="Todo title"
-            :rules="rules" counter="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            counter="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            </v-col>
+            <v-col
+              cols="12"
+              md="12"
+            >
+            <v-select
+            :items="propscategories"
+            v-model="todoCategory"
+            label="Select todo category"></v-select>
             </v-col>
             <v-col
               cols="12"
@@ -51,10 +61,12 @@ import AlertModal from './common/AlertModal.vue'
 import TodoInputModal from './Modal/TodoInputModal.vue'
 
 export default {
+  props: ["propscategories"],
   data() {
     return {
       todoTitle: "",
       todoDetail: "",
+      todoCategory: "",
       showModal: false,
       showInputModal: false,
     }
@@ -65,6 +77,7 @@ export default {
         let todoObj = {
           sn : + new Date(),
           title : this.todoTitle && this.todoTitle.trim(),
+          category: this.todoCategory,
           detail : this.todoDetail && this.todoDetail.trim(),
           isCompleted : false,
           isDeleted : false,
@@ -76,10 +89,13 @@ export default {
       }
     },
     clearInput() {
-       this.todoTitle = '';
-      this.todoDetail = '';
-    }
-
+      this.todoTitle = "";
+      this.todoDetail = "";
+      this.todoCatgory = "";
+    },
+    clearTodo() {
+      this.$emit("removeAll");
+    },
   },
   components: {
     AlertModal,
@@ -117,5 +133,18 @@ input:focus {
 
 .inputBtn {
   margin: 3px;
+}
+
+.clearAllContainer {
+  width: 8.5rem;
+  height: 50px;
+  line-height: 50px;
+  background-color: white;
+  border-radius: 5px;
+  margin: 0 auto;
+}
+.clearAllBtn {
+  color: #e20303;
+  display: block;
 }
 </style>

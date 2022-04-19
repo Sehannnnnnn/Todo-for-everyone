@@ -1,35 +1,18 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn text>
-        <span>More</span>
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-app-bar>
-
     <v-main>
       <TodoHeader />
-      <TodoInput v-on:addTodo="addTodo"></TodoInput>
+      <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
+      <v-divider class="divider"></v-divider>
       <TodoList
         v-bind:propsdata="todoItems"
+        :propscategories="todoCategories"
         @removeTodo="removeTodo"
         @completeTodo="completeTodo"
         @updateTodo="updateTodo"
       ></TodoList>
     </v-main>
+      <TodoInput v-on:addTodo="addTodo" v-on:removeAll="clearAll" v-bind:propscategories="todoCategories"></TodoInput>
     <v-footer color="primary">
       <TodoFooter v-on:removeAll="clearAll" />
     </v-footer>
@@ -41,6 +24,8 @@ import TodoFooter from "./components/TodoFooter.vue";
 import TodoHeader from "./components/TodoHeader.vue";
 import TodoList from "./components/TodoList.vue";
 import TodoInput from "./components/TodoInput.vue";
+import TodoCategory from './components/TodoCategory.vue';
+
 
 export default {
   name: "App",
@@ -50,11 +35,14 @@ export default {
     TodoFooter,
     TodoHeader,
     TodoInput,
+    TodoCategory,
   },
 
   data() {
     return {
       todoItems: [],
+      todoCategories: ["All", "Today", "시험", "약속", "과제"],
+      SelectedCategory : "All",
     };
   },
   methods: {
@@ -82,7 +70,21 @@ export default {
     updateTodo(todoObj) {
       const input = JSON.stringify(todoObj);
       localStorage.setItem(todoObj.sn, input);
-    }
+    },
+    selectTodo(category) {
+      this.todoItems = [];
+      this.SelectedCategory = category; 
+      for (var i = 0; i < localStorage.length; i++) {
+        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+          } if (this.todoItems.length > 1) {
+              const key = "sn";
+              this.todoItems.sort(function (a,b) {return a[key] - b[key]})
+          }
+      if (category !== "All") {
+          this.todoItems = this.todoItems.filter(function (todo) { return todo.category == category})
+        } 
+      }
+    
   },
   created() {
     if (localStorage.length > 0) {
@@ -104,6 +106,9 @@ body {
 }
 .shadow {
   box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.03);
+}
+.divider {
+  margin-top: 15px;
 }
 </style>
 

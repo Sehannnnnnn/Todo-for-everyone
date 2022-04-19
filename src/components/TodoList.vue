@@ -4,18 +4,20 @@
       <v-card class="mb-2 " v-for="(todoItem, index) in propsdata" :key="todoItem">
         <v-card-actions>
           <v-list-item>
-            <v-list-item-avatar @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
-              <v-icon> mdi-check </v-icon>
-            </v-list-item-avatar>
             <v-list-item-content @click="showDetailModal(todoItem)">
+              <v-list-item-group class="cate">
+                <v-chip class="cateChip" v-text="todoItem.category">
+                </v-chip>
+              </v-list-item-group>
               <v-list-item-title v-text="todoItem.title" v-bind:class="{todoTitle: true}"></v-list-item-title>
               <v-list-item-content v-text="todoItem.detail" v-bind:class="{todoDetail: true}"></v-list-item-content>
-            </v-list-item-content>
-            <v-list-item-action @click="removeTodo(todoItem, index)">
-              <v-btn icon>
+              </v-list-item-content>
+            <v-btn icon color="green" @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
+              <v-icon> mdi-check </v-icon>
+            </v-btn>
+            <v-btn icon small color="red" @click="removeTodo(todoItem, index)">
                 <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-list-item-action>
+            </v-btn>
           </v-list-item>
         </v-card-actions>
       </v-card>
@@ -31,6 +33,15 @@
               md="12"
             >
             <v-text-field v-model="Todo.title" placeholder="Type what you have to do" counter="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            </v-col>
+            <v-col
+              cols="12"
+              md="12"
+            >
+            <v-select
+            :items="propscategories"
+            v-model="Todo.category"
+            label="Select todo category"></v-select>
             </v-col>
             <v-col
               cols="12"
@@ -60,7 +71,7 @@
 import TodoDetailModal from './Modal/TodoDetailModal.vue';
 
 export default {
-  props: ["propsdata"],
+  props: ['propsdata', 'propscategories'],
   data() {
     return {
       showModal : false,
@@ -81,6 +92,8 @@ export default {
       this.$emit("completeTodo", todoItem);
     },
     showDetailModal(todoItem) {
+      console.log(todoItem);
+      console.log(this.propscategories);
       this.Todo = todoItem;
       this.showModal=true;
     }
@@ -133,6 +146,9 @@ li {
 .list-leave-to {
   opacity: 0;
   transform: translateY(30px);
+}
+.cate {
+  padding-bottom: 3px;
 }
 .hover {
   font-size: 10;
