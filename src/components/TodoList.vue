@@ -30,7 +30,7 @@
               cols="12"
               md="12"
             >
-            <v-text-field v-model="Todo.title" placeholder="Type what you have to do" :rules="rules" coutner="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            <v-text-field v-model="Todo.title" placeholder="Type what you have to do" counter="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
             </v-col>
             <v-col
               cols="12"
@@ -67,6 +67,9 @@ export default {
       Todo : {}
     }
   },
+  components: {
+    TodoDetailModal
+  },
   methods: {
     removeTodo(todoItem, index) {
       this.$emit("removeTodo", todoItem, index);
@@ -77,6 +80,10 @@ export default {
     completeTodo(todoItem) {
       this.$emit("completeTodo", todoItem);
     },
+    showDetailModal(todoItem) {
+      this.Todo = todoItem;
+      this.showModal=true;
+    }
   },
 };
 </script>

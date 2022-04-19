@@ -19,7 +19,7 @@
               md="12"
             >
             <v-text-field v-model="todoTitle" label="Todo title"
-            :rules="rules" coutner="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
+            :rules="rules" counter="25" filled rounded v-on:keyup.enter="addTodo"></v-text-field>
             </v-col>
             <v-col
               cols="12"
@@ -55,8 +55,8 @@ export default {
     return {
       todoTitle: "",
       todoDetail: "",
-      showModal: false
-
+      showModal: false,
+      showInputModal: false,
     }
   },
   methods: {
