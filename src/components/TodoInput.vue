@@ -32,6 +32,11 @@
             label="Select todo category"></v-select>
             </v-col>
             <v-col
+            cols="12"
+            md="12">
+            <DatePicker></DatePicker>
+            </v-col>
+            <v-col
               cols="12"
               md="12"
             >
@@ -59,6 +64,7 @@
 <script>
 import AlertModal from './common/AlertModal.vue'
 import TodoInputModal from './Modal/TodoInputModal.vue'
+// import DatePicker from './Modal/DatePicker.vue'
 
 export default {
   props: ["propscategories"],
@@ -100,6 +106,7 @@ export default {
   components: {
     AlertModal,
     TodoInputModal,
+    // DatePicker,
   }
 }
 </script>

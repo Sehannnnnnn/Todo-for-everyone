@@ -2,6 +2,7 @@
   <v-app>
     <v-main>
       <TodoHeader />
+      <DatePicker />
       <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
       <v-divider class="divider"></v-divider>
       <TodoList
@@ -25,7 +26,6 @@ import TodoHeader from "./components/TodoHeader.vue";
 import TodoList from "./components/TodoList.vue";
 import TodoInput from "./components/TodoInput.vue";
 import TodoCategory from './components/TodoCategory.vue';
-
 
 export default {
   name: "App",

@@ -33,7 +33,6 @@ export default {
     props: ["propscategories"],
     data() {
         return {
-
         }
     },
     methods: {

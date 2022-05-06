@@ -1,7 +1,7 @@
 <template>
 <v-container>
   <v-row justify="center">  
-    <h1>모두의 TODO</h1>  
+    <h1>모두의 TODO</h1>
   </v-row>
 </v-container>
 </template>
