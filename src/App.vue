@@ -1,101 +1,43 @@
 <template>
-  <v-app>
-    <v-main>
-      <TodoHeader />
-      <DatePicker />
-      <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
-      <v-divider class="divider"></v-divider>
-      <TodoList
-        v-bind:propsdata="todoItems"
-        :propscategories="todoCategories"
-        @removeTodo="removeTodo"
-        @completeTodo="completeTodo"
-        @updateTodo="updateTodo"
-      ></TodoList>
-    </v-main>
-      <TodoInput v-on:addTodo="addTodo" v-on:removeAll="clearAll" v-bind:propscategories="todoCategories"></TodoInput>
-    <v-footer color="primary">
-      <TodoFooter v-on:removeAll="clearAll" />
-    </v-footer>
-  </v-app>
+<div>
+<v-app v-if="!isLoaded">
+  <TodoSplash />
+</v-app>
+<v-app v-else>
+  <router-view>
+    <TodoMain />
+    <TodoLogin />
+  </router-view>
+</v-app>
+</div>
 </template>
 
 <script>
-import TodoFooter from "./components/TodoFooter.vue";
-import TodoHeader from "./components/TodoHeader.vue";
-import TodoList from "./components/TodoList.vue";
-import TodoInput from "./components/TodoInput.vue";
-import TodoCategory from './components/TodoCategory.vue';
+import TodoMain from "./components/TodoMain.vue";
+import TodoLogin from "./components/TodoLogin.vue";
+import TodoSplash from "./components/splash/TodoSplash.vue";
 
 export default {
   name: "App",
 
   components: {
-    TodoList,
-    TodoFooter,
-    TodoHeader,
-    TodoInput,
-    TodoCategory,
+    TodoMain,
+    TodoLogin,
+    TodoSplash,
   },
-
   data() {
     return {
-      todoItems: [],
-      todoCategories: ["All", "Today", "시험", "약속", "과제"],
-      SelectedCategory : "All",
-    };
-  },
-  methods: {
-    clearAll() {
-      localStorage.clear();
-      this.todoItems = [];
-    },
-    addTodo(todoObj) {
-      localStorage.setItem(todoObj.sn, JSON.stringify(todoObj));
-      this.todoItems.push(todoObj);
-    },
-    removeTodo(todoItem, index) {
-      localStorage.removeItem(todoItem.sn);
-      this.todoItems.splice(index, 1);
-    },
-    completeTodo(todoObj) {
-      const item = JSON.parse(localStorage.getItem(todoObj.sn));
-      todoObj.isCompleted = !todoObj.isCompleted;
-      if (todoObj.isCompleted) {
-        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: true}))
-      } else {
-        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: false}))
-      }
-    },
-    updateTodo(todoObj) {
-      const input = JSON.stringify(todoObj);
-      localStorage.setItem(todoObj.sn, input);
-    },
-    selectTodo(category) {
-      this.todoItems = [];
-      this.SelectedCategory = category; 
-      for (var i = 0; i < localStorage.length; i++) {
-        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-          } if (this.todoItems.length > 1) {
-              const key = "sn";
-              this.todoItems.sort(function (a,b) {return a[key] - b[key]})
-          }
-      if (category !== "All") {
-          this.todoItems = this.todoItems.filter(function (todo) { return todo.category == category})
-        } 
-      }
-    
-  },
-  created() {
-    if (localStorage.length > 0) {
-      for (var i = 0; i < localStorage.length; i++) {
-        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-      } if (this.todoItems.length > 1) {
-          const key = "sn";
-          this.todoItems.sort(function (a,b) {return a[key] - b[key]})
-      }
+      isLoaded : false
     }
-  },
+  }, created() {
+    this.splahsing();
+  }, methods: {
+    splahsing() {
+      setTimeout(() => {
+        this.isLoaded = true
+      }, 2500)
+    }
+  }
 };
 </script>
 
