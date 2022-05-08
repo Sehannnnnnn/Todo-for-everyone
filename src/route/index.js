@@ -10,7 +10,7 @@ const router = new VueRouter({
     mode: 'history',
     routes : [
         {path : '/', component: TodoMain},
-        {path : '/todo', component: TodoLogin},
+        {path : '/login', component: TodoLogin},
     ]
 });
 

@@ -4,7 +4,6 @@
   <TodoHeader />
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
   <v-divider class="divider"></v-divider>
-
   <TodoList
         v-bind:propsdata="todoItems"
         :propscategories="todoCategories"
