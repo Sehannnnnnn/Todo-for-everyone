@@ -1,11 +1,11 @@
 <template>
   <v-container fill-height fluid :style="{backgroundImage: createBackgroundString}">
-      <v-row align="center" justify="center">
+      <v-row align-item="center" justify="center">
           <v-col>
             <v-avatar size="200">
                 <v-img src="../../assets/favicon.png" max-height="200" max-width="200"/>
                 </v-avatar>
-                <h2 color >Todo For Everyone</h2>
+                <h2>Todo For Everyone</h2>
           </v-col>
       </v-row>
       </v-container>

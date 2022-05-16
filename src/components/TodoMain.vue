@@ -1,6 +1,7 @@
 <template>
 <v-app>
 <v-main>
+  {{user.email}}
   <TodoHeader />
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
   <v-divider class="divider"></v-divider>
@@ -24,7 +25,8 @@ import TodoFooter from "../components/TodoFooter.vue";
 import TodoHeader from "../components/TodoHeader.vue";
 import TodoList from "../components/TodoList.vue";
 import TodoInput from "../components/TodoInput.vue";
-import TodoCategory from '../components/TodoCategory.vue';
+import TodoCategory from "../components/TodoCategory.vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 export default {
@@ -34,6 +36,7 @@ export default {
       todoItems: [],
       todoCategories: ["All", "Today", "시험", "약속", "과제"],
       SelectedCategory : "All",
+      user : {},
     };
   },
   components: {
@@ -42,7 +45,7 @@ export default {
     TodoHeader,
     TodoInput,
     TodoCategory,
-  },
+},
 
   methods: {
     clearAll() {
@@ -93,8 +96,22 @@ export default {
           this.todoItems.sort(function (a,b) {return a[key] - b[key]})
       }
     }
-  },
+  }, 
+  beforeCreate() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        this.user = user;
+    } else {
+        alert('로그인 이후 사용 가능합니다!')
+        this.$router.push({path : '/login'});
+    }
+  })
+  }
 }
+
 </script>
 
 <style>

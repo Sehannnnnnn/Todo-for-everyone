@@ -1,12 +1,22 @@
 <template>
 <div>
+  <v-btn @click="logout">logout</v-btn>
   </div>
 </template>
 
 <script>
+import { getAuth, signOut } from "firebase/auth";
+
 export default {
   methods: {
-
+    logout() {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        // Sign-out successful.
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
   },
 };
 </script>

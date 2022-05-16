@@ -13,7 +13,7 @@
         :key="category"
         v-slot="{active, toggle}"
       >
-        <v-btnc
+        <v-btn
           class="mx-2"
           :input-value="active"
           active-class="purple white--text"
@@ -22,7 +22,7 @@
           @click="[toggle, selectCategory(category)]"
         >
           {{category}}
-        </v-btnc>
+        </v-btn>
       </v-slide-item>
     </v-slide-group>
   </v-sheet>
