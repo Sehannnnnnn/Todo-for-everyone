@@ -1,9 +1,10 @@
 <template>
-  <div id="weather">
-      <v-row justify="center">  
-    <h1>모두의 TODO</h1>
+<div>
+  <v-row  justify="center">
+      <h2>{{this.$store.getters.getUser.nickname}}님 환영합니다!</h2>
   </v-row>
     <!-- 날씨 정보가 있을 경우 -->
+      <div id="weather">
     <div v-if="typeof weather.main != 'undefined'">
       <div :title="weather.weather[0].main">
         <!-- Clear -->
@@ -45,6 +46,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -85,13 +87,13 @@ export default {
 </script>
 
 <style scoped>
-  h1 {
+  h2 {
     color: #2F3B52;
     font-weight: 900;
     margin: 2.5rem 0 1.5rem;
   }
-#weather {
-  font-size: 0.875rem;
-  font-weight: 500;
-}  
+  #weather {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }  
 </style>

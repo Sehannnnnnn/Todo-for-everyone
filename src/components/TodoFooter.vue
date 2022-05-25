@@ -13,6 +13,8 @@ export default {
       const auth = getAuth();
       signOut(auth).then(() => {
         // Sign-out successful.
+        localStorage.removeItem('IsLogined');
+        localStorage.removeItem('user');
       }).catch((err) => {
         console.log(err);
       });

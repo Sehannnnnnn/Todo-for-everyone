@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <transition-group class="pl-0" name="list" tag="ul">
-      <v-card class="mb-2 " v-for="(todoItem, index) in propsdata" :key="todoItem">
+      <v-card class="mb-2 " v-for="(todoItem, index) in todos" :key="todoItem">
         <v-card-actions>
           <v-list-item>
             <v-list-item-content @click="showDetailModal(todoItem)">
@@ -69,6 +69,7 @@
 </template>
 <script>
 import TodoDetailModal from './Modal/TodoDetailModal.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   props: ['propsdata', 'propscategories'],
@@ -80,6 +81,14 @@ export default {
   },
   components: {
     TodoDetailModal
+  },
+  computed: {
+    ...mapGetters({
+      'todos' : 'getTodos'
+    }),
+    todos() {
+      return this.$store.getters.getTodos;
+    }
   },
   methods: {
     removeTodo(todoItem, index) {

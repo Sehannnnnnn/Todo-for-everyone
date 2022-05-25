@@ -1,7 +1,6 @@
 <template>
 <v-app>
 <v-main>
-  {{user.email}}
   <TodoHeader />
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
   <v-divider class="divider"></v-divider>
@@ -15,7 +14,7 @@
       </v-main>
       <v-footer>
     <TodoInput v-on:addTodo="addTodo" v-on:removeAll="clearAll" v-bind:propscategories="todoCategories"/>
-      <TodoFooter v-on:removeAll="clearAll" />
+      <TodoFooter v-on:removeAll="clearAll" v-bind:user="user"/>
     </v-footer>
     </v-app>
 </template>
@@ -27,7 +26,7 @@ import TodoList from "../components/TodoList.vue";
 import TodoInput from "../components/TodoInput.vue";
 import TodoCategory from "../components/TodoCategory.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import {getUserInfo} from "../plugins/firebaseDatabase";
 
 export default {
     props: "",
@@ -46,7 +45,6 @@ export default {
     TodoInput,
     TodoCategory,
 },
-
   methods: {
     clearAll() {
       localStorage.clear();
@@ -85,9 +83,10 @@ export default {
       if (category !== "All") {
           this.todoItems = this.todoItems.filter(function (todo) { return todo.category == category})
         } 
-      }
+      },
   },
     created() {
+      console.log(this.$store)
     if (localStorage.length > 0) {
       for (var i = 0; i < localStorage.length; i++) {
         this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
@@ -103,9 +102,13 @@ export default {
     if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        this.user = user;
+        getUserInfo(user.email, (userInfo) => {
+          this.$store.commit('setUser', userInfo);
+          console.log(userInfo);
+        } );
+        // this.$store.commit('setUser', user);
     } else {
-        alert('로그인 이후 사용 가능합니다!')
+      //로그인이 안되있을때 
         this.$router.push({path : '/login'});
     }
   })

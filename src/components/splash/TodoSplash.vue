@@ -35,12 +35,4 @@ export default {
 </script>
 
 <style>
-.outer {
-    display: flex;
-    height: 100%;
-    align-items: center;
-}
-.inner {
-    margin: 0 auto;
-}
 </style>
