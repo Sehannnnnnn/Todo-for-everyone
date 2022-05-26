@@ -28,13 +28,14 @@
             >
             <v-select
             :items="propscategories"
+            placeholder="카테고리"
             v-model="todoCategory"
             label="Select todo category"></v-select>
             </v-col>
             <v-col
             cols="12"
             md="12">
-            <DatePicker></DatePicker>
+            <DatePicker @setDate="setDate"></DatePicker>
             </v-col>
             <v-col
               cols="12"
@@ -49,7 +50,7 @@
           </v-row>
         </v-container>
         </v-form>
-      <v-btn elevation="2" slot="footer" @click="showInputModal = false">Back
+      <v-btn elevation="2" slot="footer" @click="[showInputModal = false, clearInput()]">Back
         <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
       </v-btn>
       <v-btn elevation="2" slot="footer" @click="[showInputModal = false, addTodo()]">Save TODO
@@ -64,7 +65,7 @@
 <script>
 import AlertModal from './common/AlertModal.vue'
 import TodoInputModal from './Modal/TodoInputModal.vue'
-// import DatePicker from './Modal/DatePicker.vue'
+import DatePicker from './Modal/DatePicker.vue'
 
 export default {
   props: ["propscategories"],
@@ -73,22 +74,27 @@ export default {
       todoTitle: "",
       todoDetail: "",
       todoCategory: "",
+      todoDate: "",
       showModal: false,
       showInputModal: false,
     }
   },
   methods: {
+    setDate(date) {
+      this.todoDate = date;
+      console.log(date);
+    },
     addTodo() {
        if (this.todoTitle !== "") {
         let todoObj = {
-          sn : + new Date(),
           title : this.todoTitle && this.todoTitle.trim(),
-          category: this.todoCategory,
           detail : this.todoDetail && this.todoDetail.trim(),
+          category: this.todoCategory,
+          date : this.todoDate,
           isCompleted : false,
           isDeleted : false,
         };
-				this.$emit('addTodo', todoObj)
+				this.$store.commit('addTodos', todoObj);
         this.clearInput();
       } else {
         this.showModal = !this.showModal;
@@ -98,6 +104,7 @@ export default {
       this.todoTitle = "";
       this.todoDetail = "";
       this.todoCatgory = "";
+      this.todoDate = "";
     },
     clearTodo() {
       this.$emit("removeAll");
@@ -106,7 +113,7 @@ export default {
   components: {
     AlertModal,
     TodoInputModal,
-    // DatePicker,
+    DatePicker,
   }
 }
 </script>

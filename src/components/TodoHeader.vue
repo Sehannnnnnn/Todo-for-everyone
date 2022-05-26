@@ -1,51 +1,63 @@
 <template>
 <div>
-  <v-row  justify="center">
-      <h2>{{this.$store.getters.getUser.nickname}}님 환영합니다!</h2>
-  </v-row>
-    <!-- 날씨 정보가 있을 경우 -->
+  <v-container v-bind:style="{margin: '15px'}">
+    <v-row align="center" justify="center">
+      <v-col
+      cols="3">
+        <!-- 날씨 정보가 있을 경우 -->
       <div id="weather">
-    <div v-if="typeof weather.main != 'undefined'">
-      <div :title="weather.weather[0].main">
-        <!-- Clear -->
-        <v-icon v-if="code == 800">{{ icons[5] }}</v-icon>
-        <!-- Thunderstorm -->
-        <v-icon v-else-if="code.substr(0, 1) == 2">
-          {{ icons[0] }}
-        </v-icon>
-        <!-- Drizzle -->
-        <v-icon v-else-if="code.substr(0, 1) == 3">
-          {{ icons[1] }}
-        </v-icon>
-        <!-- Rain -->
-        <v-icon v-else-if="code.substr(0, 1) == 5">
-          {{ icons[2] }}
-        </v-icon>
-        <!-- Snow -->
-        <v-icon v-else-if="code.substr(0, 1) == 6">
-          {{ icons[3] }}
-        </v-icon>
-        <!-- Atmosphere -->
-        <v-icon v-else-if="code.substr(0, 1) == 7">
-          {{ icons[4] }}
-        </v-icon>
-        <!-- Clouds -->
-        <v-icon v-else>
-          {{ icons[6] }}
-        </v-icon>
+      <div v-if="typeof weather.main != 'undefined'">
+        <div :title="weather.weather[0].main">
+          <!-- Clear -->
+          <v-icon v-if="code == 800">{{ icons[5] }}</v-icon>
+          <!-- Thunderstorm -->
+          <v-icon v-else-if="code.substr(0, 1) == 2">
+            {{ icons[0] }}
+          </v-icon>
+          <!-- Drizzle -->
+          <v-icon v-else-if="code.substr(0, 1) == 3">
+            {{ icons[1] }}
+          </v-icon>
+          <!-- Rain -->
+          <v-icon v-else-if="code.substr(0, 1) == 5">
+            {{ icons[2] }}
+          </v-icon>
+          <!-- Snow -->
+          <v-icon v-else-if="code.substr(0, 1) == 6">
+            {{ icons[3] }}
+          </v-icon>
+          <!-- Atmosphere -->
+          <v-icon v-else-if="code.substr(0, 1) == 7">
+            {{ icons[4] }}
+          </v-icon>
+          <!-- Clouds -->
+          <v-icon v-else>
+            {{ icons[6] }}
+          </v-icon>
+        </div>
+        <div>{{ Math.round(temp) }}℃</div>
       </div>
-      <div>{{ Math.round(temp) }}℃</div>
-    </div>
-    <!-- 날씨 정보가 없을 경우 -->
-    <div v-else>
+      <!-- 날씨 정보가 없을 경우 -->
+      <div v-else>
+        <div>
+          <v-icon>mdi-cancel</v-icon>
+        </div>
+        <div>
+          {{ weather.cod }}
+        </div>
+      </div>
+      </div>
+      </v-col>
+      <v-col cols="9">
+        <h3>{{this.$store.getters.getUser.nickname}}님 환영합니다!</h3>
+      </v-col>
+    </v-row>
+    <v-row align="center" justify="center">
       <div>
-        <v-icon>mdi-cancel</v-icon>
+      {{time}}
       </div>
-      <div>
-        {{ weather.cod }}
-      </div>
-    </div>
-  </div>
+      </v-row>
+  </v-container>
   </div>
 </template>
 
@@ -53,6 +65,8 @@
 export default {
     data: function() {
     return {
+      interval: null,
+      time: null,
       api_key: '9fedb142615a2b54eb304391781d02f8',
       url_base: 'https://api.openweathermap.org/data/2.5/',
       weather: {},
@@ -70,6 +84,10 @@ export default {
       ],
     }
   },
+  beforeDestroy() {
+    // prevent memory leak
+    clearInterval(this.interval)
+  },
   mounted() {
     // API 요청 URL (지역 Seoul 고정)
     let fetchUrl = `${this.url_base}weather?q=Seoul&units=metric&APPID=${this.api_key}`
@@ -83,6 +101,22 @@ export default {
         this.code = result.weather[0].id.toString() // 날씨 코드
       })
   },
+  created() {
+    // update the time every second
+    this.interval = setInterval(() => {
+      // Concise way to format time according to system locale.
+      // In my case this returns "3:48:00 am"
+      this.time = Intl.DateTimeFormat(navigator.language, {
+        year : 'numeric',
+        month : 'long',
+        day : 'numeric',
+        weekday : 'long',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+      }).format()
+    }, 1000)
+  }
 }
 </script>
 

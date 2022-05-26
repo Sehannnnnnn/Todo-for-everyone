@@ -7,7 +7,7 @@
   <router-view>
     <TodoMain />
     <TodoLogin />
-    <TodoCelander/>
+    <TodoCalender/>
   </router-view>
 </v-app>
 </div>
@@ -17,7 +17,7 @@
 import TodoMain from "./components/TodoMain.vue";
 import TodoLogin from "./components/TodoLogin.vue";
 import TodoSplash from "./components/splash/TodoSplash.vue";
-import TodoCelander from "./components/TodoCalendar.vue"
+import TodoCalender from "./components/TodoCalendar.vue"
 
 export default {
   name: "App",
@@ -26,7 +26,7 @@ export default {
     TodoMain,
     TodoLogin,
     TodoSplash,
-    TodoCelander,
+    TodoCalender,
   },
   data() {
     return {

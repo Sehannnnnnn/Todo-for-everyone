@@ -23,24 +23,27 @@ export async function pushUserInfo (userEmail, userNickname) {
     const postListRef = ref(db, 'todos/' + dbkey);
     const newPostRef = push(postListRef);
     set(newPostRef, {
-        title : "welcome to todo",
-        tag : "",
-        start : "",
-        end : "",
-        content : "",
-        successed : "",
+        title : "welcome to todo!",
+        detail : "",
+        category : "",
+        date : "",
+        isCompleted : false,
+        isDeleted : false,
     });
 }
 
 
-export async function getTodos (userEmail) {
+export function getTodos (userEmail, cb) {
     const db = getDatabase();
     const dbkey = DBKey(userEmail);
-    const todosRef = ref(db, 'posts/' + dbkey);
-    return onValue(todosRef, (snapshot) => {
-        const data = snapshot.val();
-        return data;
+    const todosRef = ref(db, 'todos/' + dbkey);
+    const todos = [];
+    onValue(todosRef, (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            todos.push(childSnapshot.val());
+        })
     })
+    cb(todos);
 }
 
 export async function getUserInfo (userEmail, cb) {

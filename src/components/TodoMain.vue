@@ -5,15 +5,12 @@
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
   <v-divider class="divider"></v-divider>
   <TodoList
-        v-bind:propsdata="todoItems"
+        v-bind:propsdata="todoFiltered"
         :propscategories="todoCategories"
-        @removeTodo="removeTodo"
-        @completeTodo="completeTodo"
-        @updateTodo="updateTodo"
       />
       </v-main>
       <v-footer>
-    <TodoInput v-on:addTodo="addTodo" v-on:removeAll="clearAll" v-bind:propscategories="todoCategories"/>
+    <TodoInput v-bind:propscategories="todoCategories"/>
       <TodoFooter v-on:removeAll="clearAll" v-bind:user="user"/>
     </v-footer>
     </v-app>
@@ -26,15 +23,16 @@ import TodoList from "../components/TodoList.vue";
 import TodoInput from "../components/TodoInput.vue";
 import TodoCategory from "../components/TodoCategory.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {getUserInfo} from "../plugins/firebaseDatabase";
+import { getUserInfo, getTodos } from "../plugins/firebaseDatabase";
 
 export default {
     props: "",
     data() {
     return {
-      todoItems: [],
       todoCategories: ["All", "Today", "시험", "약속", "과제"],
       SelectedCategory : "All",
+      todoFiltered : [],
+      todoAll : [],
       user : {},
     };
   },
@@ -44,74 +42,55 @@ export default {
     TodoHeader,
     TodoInput,
     TodoCategory,
-},
+  },
+  computed: {
+    todos() {
+      return this.$store.getters.getTodos;
+    },
+  },
+  watch: {
+    todos(value) {
+      this.todoAll = value;
+      this.selectTodo(this.SelectedCategory);
+    }
+  },
   methods: {
     clearAll() {
       localStorage.clear();
       this.todoItems = [];
     },
-    addTodo(todoObj) {
-      localStorage.setItem(todoObj.sn, JSON.stringify(todoObj));
-      this.todoItems.push(todoObj);
-    },
-    removeTodo(todoItem, index) {
-      localStorage.removeItem(todoItem.sn);
-      this.todoItems.splice(index, 1);
-    },
-    completeTodo(todoObj) {
-      const item = JSON.parse(localStorage.getItem(todoObj.sn));
-      todoObj.isCompleted = !todoObj.isCompleted;
-      if (todoObj.isCompleted) {
-        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: true}))
-      } else {
-        localStorage.setItem(todoObj.sn, JSON.stringify({...item, isCompleted: false}))
-      }
-    },
-    updateTodo(todoObj) {
-      const input = JSON.stringify(todoObj);
-      localStorage.setItem(todoObj.sn, input);
-    },
     selectTodo(category) {
-      this.todoItems = [];
-      this.SelectedCategory = category; 
-      for (var i = 0; i < localStorage.length; i++) {
-        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-          } if (this.todoItems.length > 1) {
-              const key = "sn";
-              this.todoItems.sort(function (a,b) {return a[key] - b[key]})
-          }
+      this.todoFiltered = [];
+      this.SelectedCategory = category;
       if (category !== "All") {
-          this.todoItems = this.todoItems.filter(function (todo) { return todo.category == category})
-        } 
+        for (let i  = 0; i < this.$store.state.todoItems.length; i++) {
+          if (category == this.$store.state.todoItems[i].category) {
+            this.todoFiltered.push(this.$store.state.todoItems[i])
+            }
+        }
+      } else this.todoFiltered = this.$store.state.todoItems;
       },
   },
-    created() {
-      console.log(this.$store)
-    if (localStorage.length > 0) {
-      for (var i = 0; i < localStorage.length; i++) {
-        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-      } if (this.todoItems.length > 1) {
-          const key = "sn";
-          this.todoItems.sort(function (a,b) {return a[key] - b[key]})
-      }
-    }
-  }, 
-  beforeCreate() {
+  created() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
     if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
         getUserInfo(user.email, (userInfo) => {
           this.$store.commit('setUser', userInfo);
-          console.log(userInfo);
-        } );
-        // this.$store.commit('setUser', user);
+        });
+        getTodos(user.email, (todos) => {
+            this.$store.commit('fetchTodos', todos);
+            console.log(this.$store);
+          });
+      this.todoAll = this.$store.state.todoItems;
+      this.todoFiltered = this.todoAll;  
     } else {
       //로그인이 안되있을때 
         this.$router.push({path : '/login'});
     }
   })
+  }, 
+  beforeCreate() {
   }
 }
 

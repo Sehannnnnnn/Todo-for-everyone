@@ -1,4 +1,3 @@
-import { getTodos } from '@/plugins/firebaseDatabase';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -7,15 +6,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state : {
         user : {},
-        todoItems: [
-            {   
-                sn : 1,
-                title : "yeah",
-                detail : "wow",
-                category: "TODAY",
-                isCompleted : true,
-            }
-        ]
+        todoItems: []
     },
     getters : {
         getUser: state => {
@@ -29,6 +20,9 @@ export const store = new Vuex.Store({
         setUser: (state, user) => {
             state.user = user;
         }, 
+        fetchTodos: (state, todos) => {
+            state.todoItems = todos;
+        },
         clearUser : (state) => {
             state.user = {};
         },
@@ -36,22 +30,26 @@ export const store = new Vuex.Store({
             state.todoItems.push(value);
             //firebase add
         },
-        removeTodos: (state, payload) => {
-            state.todoItems.splice(payload.index, 1);
+        removeTodos: (state, value) => {
+            const index = state.todoItems.indexOf(value);
+            state.todoItems.splice(index,1);
             //firebase remove;
         }, 
         clearAll : (state) => {
             state.todoItems = [];
             //firebase claer
         },
-        updataTodos: (state, payload) => {
-            state.todoItems[payload.index] = payload.value;
+        completeTodo : (state, value) => {
+            const index = state.todoItems.indexOf(value);
+            state.todoItems[index].isCompleted = !state.todoItems[index].isCompleted
+        },
+        updateTodos: (state, value) => {
+            const index = state.todoItems.indexOf(value);
+            console.log(index);
+            state.todoItems.splice(index, 1, value);
             //firebase push
             //firebase get
         },
-        fetchTodos: (state, payload) => {
-            const todos = getTodos(payload.userEmail);
-            state.todoItems = todos;
-        }
+        
     }
 })

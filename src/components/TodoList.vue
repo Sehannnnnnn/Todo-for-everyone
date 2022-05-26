@@ -1,21 +1,22 @@
 <template>
   <v-container>
     <transition-group class="pl-0" name="list" tag="ul">
-      <v-card class="mb-2 " v-for="(todoItem, index) in todos" :key="todoItem">
+      <v-card class="mb-2 " v-for="(todoItem, index) in propsdata" :key="index">
         <v-card-actions>
           <v-list-item>
             <v-list-item-content @click="showDetailModal(todoItem)">
               <v-list-item-group class="cate">
-                <v-chip class="cateChip" v-text="todoItem.category">
+                <v-chip class="cateChip" v-text="todoItem.category" color="yellow">
                 </v-chip>
+                <v-chip class="dateChip" v-text="todoItem.date"></v-chip>
               </v-list-item-group>
               <v-list-item-title v-text="todoItem.title" v-bind:class="{todoTitle: true}"></v-list-item-title>
               <v-list-item-content v-text="todoItem.detail" v-bind:class="{todoDetail: true}"></v-list-item-content>
               </v-list-item-content>
-            <v-btn icon color="green" @click="completeTodo(todoItem, index)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
+            <v-btn icon color="green" @click="completeTodo(todoItem)" v-bind:style="{ backgroundColor : todoItem.isCompleted ? 'lightgreen' : '' }">
               <v-icon> mdi-check </v-icon>
             </v-btn>
-            <v-btn icon small color="red" @click="removeTodo(todoItem, index)">
+            <v-btn icon small color="red" @click="removeTodo(todoItem)">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-list-item>
@@ -44,6 +45,11 @@
             label="Select todo category"></v-select>
             </v-col>
             <v-col
+            cols="12"
+            md="12">
+            <DatePicker @setDate="setDate" @value="Todo.date"></DatePicker>
+            </v-col>
+            <v-col
               cols="12"
               md="12"
             >
@@ -69,43 +75,53 @@
 </template>
 <script>
 import TodoDetailModal from './Modal/TodoDetailModal.vue';
-import { mapGetters } from 'vuex';
+import DatePicker from './Modal/DatePicker.vue'
+import {mapGetters} from 'vuex';
 
 export default {
   props: ['propsdata', 'propscategories'],
   data() {
     return {
       showModal : false,
-      Todo : {}
+      Todo: {
+        title : "",
+        detail : "",
+        date : "",
+        category : "",
+        isCompleted : "",
+      },
     }
   },
   components: {
-    TodoDetailModal
+    TodoDetailModal,
+    DatePicker
   },
-  computed: {
-    ...mapGetters({
-      'todos' : 'getTodos'
-    }),
-    todos() {
-      return this.$store.getters.getTodos;
-    }
-  },
+  computed: mapGetters({
+    todos : 'getTodos'
+  }),
   methods: {
-    removeTodo(todoItem, index) {
-      this.$emit("removeTodo", todoItem, index);
+    removeTodo(todoItem) {
+      this.$store.commit('removeTodos', todoItem);
+      console.log(this.todos)
+      console.log(this.propsdata);
     },
     updateTodo() {
-      this.$emit("updateTodo", this.Todo);
+      this.$store.commit('updateTodos', this.Todo);
+      console.log(this.$store);
     },
     completeTodo(todoItem) {
-      this.$emit("completeTodo", todoItem);
+      this.$store.commit("completeTodo", todoItem);
+      console.log(this.$store);
     },
     showDetailModal(todoItem) {
       console.log(todoItem);
       console.log(this.propscategories);
       this.Todo = todoItem;
       this.showModal=true;
-    }
+    },
+    setDate(date) {
+      this.Todo.date = date[0];
+    },
   },
 };
 </script>
@@ -139,6 +155,7 @@ li {
 
 .todoTitle {
   font-size: 18px;
+  padding : 8px;
   font-weight: bolder;
 }
 
@@ -157,7 +174,14 @@ li {
   transform: translateY(30px);
 }
 .cate {
-  padding-bottom: 3px;
+  display: flex;
+  padding-bottom: 10px;
+}
+.cateChip {
+  margin-right: 10px;
+}
+.dateChip {
+  margin-right: 10px;
 }
 .hover {
   font-size: 10;

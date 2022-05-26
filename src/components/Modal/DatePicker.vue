@@ -1,9 +1,8 @@
 <template>
-<v-menu
-        ref="menu"
+  <v-menu
         v-model="menu"
         :close-on-content-click="false"
-        :return-value.sync="date"
+        :nudge-right="40"
         transition="scale-transition"
         offset-y
         min-width="auto"
@@ -11,7 +10,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
             v-model="date"
-            label="Picker in menu"
+            label="Picker without buttons"
             prepend-icon="mdi-calendar"
             readonly
             v-bind="attrs"
@@ -20,26 +19,8 @@
         </template>
         <v-date-picker
           v-model="date"
-          no-title
-          scrollable
-          range
-        >
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="primary"
-            @click="menu = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            text
-            color="primary"
-            @click="$refs.menu.save(date)"
-          >
-            OK
-          </v-btn>
-        </v-date-picker>
+          @input="[menu = false, emitDate(date)]"
+        ></v-date-picker>
       </v-menu>
 </template>
 <script>
@@ -48,5 +29,10 @@
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       menu: false,
     }),
+    methods: {
+      emitDate(date) {
+          this.$emit('setDate',date);
+      }
+    }
   }
 </script>
