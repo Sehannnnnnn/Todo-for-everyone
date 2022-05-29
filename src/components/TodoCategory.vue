@@ -10,7 +10,7 @@
     >
       <v-slide-item
         v-for="category in propscategories"
-        :key="category"
+        :key="category.cate"
         v-slot="{active, toggle}"
       >
         <v-btn
@@ -19,9 +19,10 @@
           active-class="purple white--text"
           depressed
           rounded
-          @click="[toggle, selectCategory(category)]"
+          :color="category.color"
+          @click="[toggle, selectCategory(category.cate)]"
         >
-          {{category}}
+          {{category.cate}}
         </v-btn>
       </v-slide-item>
     </v-slide-group>

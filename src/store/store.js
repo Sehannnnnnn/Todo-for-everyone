@@ -1,3 +1,4 @@
+import { removeTodos, updateTodos } from '@/plugins/firebaseDatabase';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -6,7 +7,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state : {
         user : {},
-        todoItems: []
+        todoItems: {},
     },
     getters : {
         getUser: state => {
@@ -26,29 +27,44 @@ export const store = new Vuex.Store({
         clearUser : (state) => {
             state.user = {};
         },
-        addTodos: (state, value) => {
-            state.todoItems.push(value);
-            //firebase add
-        },
+        // addTodos: (state, value) => {
+            
+        // },
         removeTodos: (state, value) => {
-            const index = state.todoItems.indexOf(value);
-            state.todoItems.splice(index,1);
+            console.log('실행!')
+            let todokey = "";
+            Object.entries(state.todoItems).forEach(([key, todo]) => {
+                if (value == todo) {
+                    todokey = key;
+                } 
+            });
             //firebase remove;
+            removeTodos(state.user.email, todokey);
         }, 
         clearAll : (state) => {
             state.todoItems = [];
             //firebase claer
         },
-        completeTodo : (state, value) => {
-            const index = state.todoItems.indexOf(value);
-            state.todoItems[index].isCompleted = !state.todoItems[index].isCompleted
+        completeTodo : (state, payload) => {
+            let todokey = "";
+            let value = payload.todo;
+            Object.entries(state.todoItems).forEach(([key, todo]) => {
+                if (value == todo) {
+                    todokey = key;
+                } 
+            })
+            value = {...value, isCompleted : payload.isCompleted};
+            updateTodos(state.user.email, todokey, value);
         },
         updateTodos: (state, value) => {
-            const index = state.todoItems.indexOf(value);
-            console.log(index);
-            state.todoItems.splice(index, 1, value);
-            //firebase push
-            //firebase get
+            let todokey = "";
+            Object.entries(state.todoItems).forEach(([key, todo]) => {
+                if (value == todo) {
+                    todokey = key;
+                } 
+            });
+            //firebase update
+            updateTodos(state.user.email, todokey, value);
         },
         
     }

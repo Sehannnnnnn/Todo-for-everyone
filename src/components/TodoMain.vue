@@ -1,7 +1,7 @@
 <template>
 <v-app>
 <v-main>
-  <TodoHeader />
+    <TodoHeader />
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
   <v-divider class="divider"></v-divider>
   <TodoList
@@ -24,12 +24,19 @@ import TodoInput from "../components/TodoInput.vue";
 import TodoCategory from "../components/TodoCategory.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getUserInfo, getTodos } from "../plugins/firebaseDatabase";
+import {mapGetters} from 'vuex';
 
 export default {
     props: "",
     data() {
     return {
-      todoCategories: ["All", "Today", "시험", "약속", "과제"],
+      todoCategories: [
+        {cate: "All", color:""}, 
+        {cate: "Today", color:'yellow'}, 
+        {cate: "학교", color : 'cyan lighten-2'}, 
+        {cate: "약속", color : 'teal lighten-4'}, 
+        {cate: "일", color: 'orange'}
+        ],
       SelectedCategory : "All",
       todoFiltered : [],
       todoAll : [],
@@ -43,13 +50,12 @@ export default {
     TodoInput,
     TodoCategory,
   },
-  computed: {
-    todos() {
-      return this.$store.getters.getTodos;
-    },
-  },
+   computed: mapGetters({
+    todos : 'getTodos'
+  }),
   watch: {
     todos(value) {
+      console.log(value);
       this.todoAll = value;
       this.selectTodo(this.SelectedCategory);
     }
@@ -63,15 +69,16 @@ export default {
       this.todoFiltered = [];
       this.SelectedCategory = category;
       if (category !== "All") {
-        for (let i  = 0; i < this.$store.state.todoItems.length; i++) {
-          if (category == this.$store.state.todoItems[i].category) {
-            this.todoFiltered.push(this.$store.state.todoItems[i])
+        for (let i  = 0; i < this.todoAll.length; i++) {
+          if (category == this.todoAll[i].category) {
+            this.todoFiltered.push(this.todoAll[i]);
             }
         }
-      } else this.todoFiltered = this.$store.state.todoItems;
+      } else this.todoFiltered = this.todoAll;
       },
   },
   created() {
+    console.log(this.todoFiltered);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -80,7 +87,6 @@ export default {
         });
         getTodos(user.email, (todos) => {
             this.$store.commit('fetchTodos', todos);
-            console.log(this.$store);
           });
       this.todoAll = this.$store.state.todoItems;
       this.todoFiltered = this.todoAll;  

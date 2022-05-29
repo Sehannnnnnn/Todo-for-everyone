@@ -6,7 +6,7 @@
           <v-list-item>
             <v-list-item-content @click="showDetailModal(todoItem)">
               <v-list-item-group class="cate">
-                <v-chip class="cateChip" v-text="todoItem.category" color="yellow">
+                <v-chip class="cateChip" v-text="todoItem.category" :color="tagColor[todoItem.category]">
                 </v-chip>
                 <v-chip class="dateChip" v-text="todoItem.date"></v-chip>
               </v-list-item-group>
@@ -40,7 +40,7 @@
               md="12"
             >
             <v-select
-            :items="propscategories"
+            :items="categories"
             v-model="Todo.category"
             label="Select todo category"></v-select>
             </v-col>
@@ -76,12 +76,20 @@
 <script>
 import TodoDetailModal from './Modal/TodoDetailModal.vue';
 import DatePicker from './Modal/DatePicker.vue'
-import {mapGetters} from 'vuex';
+import {getTodos} from '../plugins/firebaseDatabase';
 
 export default {
   props: ['propsdata', 'propscategories'],
   data() {
     return {
+      categories: [],
+      tagColor: {
+        All : '',
+        Today : 'yellow',
+        학교 : 'cyan lighten-2',
+        약속 : 'teal lighten-4',
+        일 : 'orange'
+      },
       showModal : false,
       Todo: {
         title : "",
@@ -96,22 +104,27 @@ export default {
     TodoDetailModal,
     DatePicker
   },
-  computed: mapGetters({
-    todos : 'getTodos'
-  }),
   methods: {
     removeTodo(todoItem) {
+      console.log(todoItem);
       this.$store.commit('removeTodos', todoItem);
-      console.log(this.todos)
-      console.log(this.propsdata);
+      getTodos(this.$store.state.user.email, (todos) => {
+            this.$store.commit('fetchTodos', todos);
+          });
     },
     updateTodo() {
       this.$store.commit('updateTodos', this.Todo);
-      console.log(this.$store);
     },
     completeTodo(todoItem) {
-      this.$store.commit("completeTodo", todoItem);
-      console.log(this.$store);
+      let isCom = !todoItem.isCompleted;
+      let payload = {
+        todo : todoItem,
+        isCompleted : isCom
+      }
+      this.$store.commit("completeTodo", payload);
+      getTodos(this.$store.state.user.email, (todos) => {
+            this.$store.commit('fetchTodos', todos);
+          });
     },
     showDetailModal(todoItem) {
       console.log(todoItem);
@@ -123,6 +136,11 @@ export default {
       this.Todo.date = date[0];
     },
   },
+  created() {
+      this.propscategories.map((ele) => {
+        this.categories.push(ele.cate);
+      })
+  }
 };
 </script>
 <style scoped>

@@ -1,7 +1,6 @@
 <template>
   <div class="inputBox shadow">
     <v-btn elevation="3" @click="showInputModal = true">Write Todo</v-btn>
-    <v-btn elevation="3" @click="clearTodo">Clear All</v-btn>
     <v-divider></v-divider>
     <AlertModal v-if="showModal" @close="showModal = false">
       <h3 slot="header">경고</h3>
@@ -27,7 +26,7 @@
               md="12"
             >
             <v-select
-            :items="propscategories"
+            :items="categories"
             placeholder="카테고리"
             v-model="todoCategory"
             label="Select todo category"></v-select>
@@ -50,10 +49,10 @@
           </v-row>
         </v-container>
         </v-form>
-      <v-btn elevation="2" slot="footer" @click="[showInputModal = false, clearInput()]">Back
+      <v-btn elevation="2" slot="footer" @click="clearInput">Back
         <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
       </v-btn>
-      <v-btn elevation="2" slot="footer" @click="[showInputModal = false, addTodo()]">Save TODO
+      <v-btn elevation="2" slot="footer" @click="addTodo">Save TODO
         <span class="addContainer">
         <i class="addBtn fas fa-plus" aria-hidden="true"></i>
     </span>
@@ -66,11 +65,13 @@
 import AlertModal from './common/AlertModal.vue'
 import TodoInputModal from './Modal/TodoInputModal.vue'
 import DatePicker from './Modal/DatePicker.vue'
+import { writeTodos, getTodos } from './../plugins/firebaseDatabase'
 
 export default {
   props: ["propscategories"],
   data() {
     return {
+      categories: [],
       todoTitle: "",
       todoDetail: "",
       todoCategory: "",
@@ -85,6 +86,7 @@ export default {
       console.log(date);
     },
     addTodo() {
+      this.showInputModal = false;
        if (this.todoTitle !== "") {
         let todoObj = {
           title : this.todoTitle && this.todoTitle.trim(),
@@ -94,21 +96,28 @@ export default {
           isCompleted : false,
           isDeleted : false,
         };
-				this.$store.commit('addTodos', todoObj);
+				writeTodos(this.$store.state.user.email, todoObj);
+        getTodos(this.$store.state.user.email, (todos) => {
+            this.$store.commit('fetchTodos', todos);
+          });
+        console.log(this.$store);
         this.clearInput();
       } else {
         this.showModal = !this.showModal;
       }
     },
     clearInput() {
+      this.showInputModal = false;
       this.todoTitle = "";
       this.todoDetail = "";
       this.todoCatgory = "";
       this.todoDate = "";
     },
-    clearTodo() {
-      this.$emit("removeAll");
-    },
+  },
+  created() {
+      this.propscategories.map((ele) => {
+        this.categories.push(ele.cate);
+      })
   },
   components: {
     AlertModal,

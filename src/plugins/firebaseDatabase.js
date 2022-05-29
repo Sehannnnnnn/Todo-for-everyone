@@ -1,4 +1,4 @@
-import { getDatabase, ref, push,set, onValue, get, child } from "firebase/database";
+import { getDatabase, ref, push,set, get, child, remove, update } from "firebase/database";
 
 
 function DBKey (userEmail) {
@@ -32,20 +32,41 @@ export async function pushUserInfo (userEmail, userNickname) {
     });
 }
 
-
-export function getTodos (userEmail, cb) {
+//Todo 가져오기
+export async function getTodos (userEmail, cb) {
+    console.log("getTodos");
     const db = getDatabase();
     const dbkey = DBKey(userEmail);
     const todosRef = ref(db, 'todos/' + dbkey);
-    const todos = [];
-    onValue(todosRef, (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-            todos.push(childSnapshot.val());
-        })
-    })
-    cb(todos);
+   const todos = await get(child(todosRef,'/')).then((snapshot) => {
+    if (snapshot.exists()) return snapshot.val();
+    else {
+      console.log("No data available");
+    }
+  }).catch((error) => {
+    console.error(error);
+  });
+  cb(todos);
 }
 
+//Todo 쓰기
+export function writeTodos (userEmail, Todos) {
+    const db = getDatabase();
+    const dbkey = DBKey(userEmail);
+    const postListRef = ref(db, 'todos/' + dbkey);
+    const newPostRef = push(postListRef);
+    set(newPostRef, Todos);
+}
+
+//Todo 덮어쓰기
+export function updateTodos (userEmail, todokey, todo) {
+    const db = getDatabase();
+    const dbkey = DBKey(userEmail);
+    const todoRef = ref(db, 'todos/'+dbkey+'/'+todokey);
+    update(todoRef, todo);
+}
+
+//User Info 가져오기
 export async function getUserInfo (userEmail, cb) {
     const dbRef = ref(getDatabase());
     const dbkey = DBKey(userEmail);
@@ -59,4 +80,11 @@ export async function getUserInfo (userEmail, cb) {
       });
       cb(userInfo);
     }
+
+export async function removeTodos(userEmail, todokey) {
+    const db = getDatabase();
+    const dbkey = DBKey(userEmail);
+    const todoRef = ref(db, 'todos/'+dbkey+'/'+todokey);
+    remove(todoRef);
+}
 

@@ -6,7 +6,7 @@ import router from './route/index.js'
 import {store} from './store/store.js';
 
 Vue.config.productionTip = false
-
+Vue.config.devtools = true
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
