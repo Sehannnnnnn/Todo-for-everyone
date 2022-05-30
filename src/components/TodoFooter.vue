@@ -1,6 +1,37 @@
 <template>
 <div>
-  <v-btn @click="logout">logout</v-btn>
+  <v-container fluid>
+  <v-row no-gutters>
+    <v-col cols="3">
+      <v-btn @click="logout">
+        <v-icon>
+          mdi-logout
+        </v-icon>
+      </v-btn>
+    </v-col>
+    <v-col cols="3">
+      <v-btn @click="nav_cal">
+        <v-icon>
+          mdi-calendar
+        </v-icon>
+  </v-btn>
+    </v-col>
+    <v-col cols="3">
+       <v-btn @click="nav_cam">
+         <v-icon>
+          mdi-emoticon
+        </v-icon>
+       </v-btn>
+    </v-col>
+     <v-col cols="3">
+       <v-btn @click="nav_home">
+         <v-icon>
+          mdi-home
+        </v-icon>
+       </v-btn>
+    </v-col>
+  </v-row>
+  </v-container>
   </div>
 </template>
 
@@ -18,6 +49,12 @@ export default {
       }).catch((err) => {
         console.log(err);
       });
+    },
+    nav_cal() {
+      this.$router.push({path : '/calender'});
+    },
+    nav_home() {
+      this.$router.push({path : '/'});
     }
   },
 };

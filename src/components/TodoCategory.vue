@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         selectCategory(category) {
-            this.$emit("selectTodo", category);
+          this.$emit("selectTodo", category);
         }
     },
 }

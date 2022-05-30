@@ -3,15 +3,17 @@
 <v-main>
     <TodoHeader />
     <TodoCategory v-bind:propscategories="todoCategories" @selectTodo="selectTodo"/>
-  <v-divider class="divider"></v-divider>
-  <TodoList
-        v-bind:propsdata="todoFiltered"
-        :propscategories="todoCategories"
-      />
+    <v-divider class="divider"></v-divider>
+    <TodoList
+          v-bind:propsdata="todoFiltered"
+          :propscategories="todoCategories"
+        />
+      <TodoInput v-bind:propscategories="todoCategories"/>
       </v-main>
-      <v-footer>
-    <TodoInput v-bind:propscategories="todoCategories"/>
-      <TodoFooter v-on:removeAll="clearAll" v-bind:user="user"/>
+    <v-footer>
+      <center>
+    <TodoFooter v-on:removeAll="clearAll" v-bind:user="user"/>
+      </center>
     </v-footer>
     </v-app>
 </template>
@@ -39,7 +41,8 @@ export default {
         ],
       SelectedCategory : "All",
       todoFiltered : [],
-      todoAll : [],
+      temp : [],
+      todoAll : {},
       user : {},
     };
   },
@@ -66,19 +69,13 @@ export default {
       this.todoItems = [];
     },
     selectTodo(category) {
-      this.todoFiltered = [];
-      this.SelectedCategory = category;
       if (category !== "All") {
-        for (let i  = 0; i < this.todoAll.length; i++) {
-          if (category == this.todoAll[i].category) {
-            this.todoFiltered.push(this.todoAll[i]);
-            }
-        }
-      } else this.todoFiltered = this.todoAll;
+        this.todoFiltered = Object.values(this.todoAll)
+        .filter(function(todo) {return todo.category == category})
+      } else this.todoFiltered = Object.values(this.todoAll);
       },
   },
   created() {
-    console.log(this.todoFiltered);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -89,7 +86,7 @@ export default {
             this.$store.commit('fetchTodos', todos);
           });
       this.todoAll = this.$store.state.todoItems;
-      this.todoFiltered = this.todoAll;  
+      this.todoFiltered = Object.values(this.todoAll);  
     } else {
       //로그인이 안되있을때 
         this.$router.push({path : '/login'});

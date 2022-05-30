@@ -23,7 +23,7 @@
         </v-card-actions>
       </v-card>
     </transition-group>
-
+    
   <TodoDetailModal v-if="showModal" @close="showModal=false">
     <h2 slot="header">TODO</h2>
         <v-form slot="bodyform">
