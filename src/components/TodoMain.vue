@@ -12,7 +12,7 @@
       </v-main>
     <v-footer>
       <center>
-    <TodoFooter v-on:removeAll="clearAll" v-bind:user="user"/>
+    <TodoFooter />
       </center>
     </v-footer>
     </v-app>
@@ -58,9 +58,11 @@ export default {
   }),
   watch: {
     todos(value) {
-      console.log(value);
-      this.todoAll = value;
-      this.selectTodo(this.SelectedCategory);
+      if (value == undefined) this.todoAll = {};
+      else {
+        this.todoAll = value;
+        this.selectTodo(this.SelectedCategory);
+      }
     }
   },
   methods: {
@@ -70,9 +72,8 @@ export default {
     },
     selectTodo(category) {
       if (category !== "All") {
-        this.todoFiltered = Object.values(this.todoAll)
-        .filter(function(todo) {return todo.category == category})
-      } else this.todoFiltered = Object.values(this.todoAll);
+        this.todoFiltered = Object.keys(this.todoAll).length != 0  ? Object.values(this.todoAll).filter(function(todo) {return todo.category == category}): [];
+      } else this.todoFiltered =  Object.keys(this.todoAll).length != 0  ? Object.values(this.todoAll): [];
       },
   },
   created() {
@@ -86,7 +87,7 @@ export default {
             this.$store.commit('fetchTodos', todos);
           });
       this.todoAll = this.$store.state.todoItems;
-      this.todoFiltered = Object.values(this.todoAll);  
+      this.todoFiltered = Object.keys(this.todoAll).length != 0 ? Object.values(this.todoAll): [];  
     } else {
       //로그인이 안되있을때 
         this.$router.push({path : '/login'});

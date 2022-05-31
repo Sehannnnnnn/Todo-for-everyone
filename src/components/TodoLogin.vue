@@ -49,10 +49,12 @@ export default {
   },
   methods: {
     login () {
-      loginUser(this.email, this.pw);
-      setTimeout(() => {
-        this.$router.push({path : '/'})
+      loginUser(this.email, this.pw, () => {
+        setTimeout(() => {
+          this.$router.push({path : '/'})
       }, 1000)
+      });
+      
     },
     register() {
       registerUser(this.email, this.pw);

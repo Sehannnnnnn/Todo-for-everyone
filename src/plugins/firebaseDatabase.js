@@ -41,7 +41,7 @@ export async function getTodos (userEmail, cb) {
    const todos = await get(child(todosRef,'/')).then((snapshot) => {
     if (snapshot.exists()) return snapshot.val();
     else {
-      console.log("No data available");
+      return {};
     }
   }).catch((error) => {
     console.error(error);
@@ -73,7 +73,7 @@ export async function getUserInfo (userEmail, cb) {
     const userInfo = await get(child(dbRef, `users/${dbkey}`)).then((snapshot) => {
         if (snapshot.exists()) return snapshot.val();
         else {
-          console.log("No data available");
+          return {};
         }
       }).catch((error) => {
         console.error(error);
@@ -88,3 +88,26 @@ export async function removeTodos(userEmail, todokey) {
     remove(todoRef);
 }
 
+export async function getFeelings(userEmail, cb) {
+  const dbRef = ref(getDatabase());
+    const dbkey = DBKey(userEmail);
+    const feelingsAll = await get(child(dbRef, `feelings/${dbkey}`)).then(
+      (snapshot) => {
+        if (snapshot.exists()) return snapshot.val();
+        else {
+          return {};
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+      cb(feelingsAll);
+}
+
+export async function pushFeelings(userEmail, feelings, cb) {
+  const db = getDatabase();
+  const dbkey = DBKey(userEmail);
+  const FeelListRef = ref(db, 'feelings/' + dbkey);
+  const newPostRef = push(FeelListRef);
+  set(newPostRef, feelings);
+  cb(userEmail);
+}

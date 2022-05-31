@@ -55,6 +55,9 @@ export default {
     },
     nav_home() {
       this.$router.push({path : '/'});
+    },
+    nav_cam() {
+      this.$router.push({path : '/feelings'})
     }
   },
 };

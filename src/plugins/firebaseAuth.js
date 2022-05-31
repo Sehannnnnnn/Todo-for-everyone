@@ -1,6 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-export function loginUser(email, pw) {
+export function loginUser(email, pw, cb) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, pw)
     .then((userCredential) => {
@@ -8,6 +8,7 @@ export function loginUser(email, pw) {
         const user = userCredential.user;
         // ...
         console.log(user);
+        cb();
     })
     .catch((error) => {
         const errorCode = error.code;

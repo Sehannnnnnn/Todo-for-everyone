@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-container v-bind:style="{margin: '15px'}">
+  <v-container class="header">
     <v-row align="center" justify="center">
       <v-col
       cols="3">
@@ -120,7 +120,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+  .header {
+    padding-bottom : 20px;
+    margin-bottom : 5px;
+    border-bottom: 1px solid lightgrey;
+  }
   h2 {
     color: #2F3B52;
     font-weight: 900;
